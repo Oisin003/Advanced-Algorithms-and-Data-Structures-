@@ -1,0 +1,157 @@
+package temp;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.Stack;
+
+
+public class Graph 
+{
+	//REFACTOR: rootNode was a poor name (suggests that there is a root)
+	public Node startNode;
+
+	//REFACTOR - avoid use of "Raw" types
+	//Note: Change all internal data structures to Generic versions
+	public ArrayList<Node> nodes=new ArrayList<Node>();
+
+	//REFACTOR: store floats rather than ints so that we can assign costs eventually
+	public float[][] adjMatrix;//Edges will be represented as adjacency Matrix
+	int size;
+
+	public void setStartNode(Node n)
+	{
+		this.startNode=n;
+	}
+
+
+	public Node getStartNode()
+	{
+		return this.startNode;
+	}
+
+	public void addNode(Node n)
+	{
+		nodes.add(n);
+	}
+
+	//This method will be called to connect two nodes
+	//REFACTOR: Changed param names 
+	public void connectNode(Node firstNode,Node secondNode)
+	{
+		if(adjMatrix==null)
+		{
+			size=nodes.size();
+			//REFACTOR: Due to Dijkstra costs, adjMatrix is now float
+			adjMatrix = new float[size][size];
+			//REFACTOR: The line below prevents errors if we forget to
+			//set the StartNode before calling bfs()
+			setStartNode(nodes.get(0));
+		}
+
+		int firstNodeIndex = nodes.indexOf(firstNode);
+		int secondNodeIndex = nodes.indexOf(secondNode);
+		adjMatrix[firstNodeIndex][secondNodeIndex] = 1;
+		adjMatrix[secondNodeIndex][firstNodeIndex] = 1;
+	}
+
+	//Use the Adjacency matrix to return an unvisited neighbour of
+	//node 'n'.
+	//Note that this method only returns a single neighbour. Therefore, our calling
+	//code must loop to retrieve all neighbours (for, say, a breadth-first-search).
+	private Node getUnvisitedConnectedNode(Node n)
+	{
+
+		int index = nodes.indexOf(n);
+		int j = 0;
+		while(j < size)
+		{
+			if((adjMatrix[index][j] == 1) && !nodes.get(j).visited)
+			{
+				return nodes.get(j);
+			}
+			j++;
+		}
+		return null;
+	}
+
+	//BFS traversal of a tree is performed by the bfs() function
+	//This does a full traversal, i.e. it doesn't stop when it 
+	//reaches a goal node
+	//It depends upon startNode already being set up
+	public void bfs()
+	{
+
+		//BFS uses Queue data structure
+		Queue<Node> q=new LinkedList<Node>();
+		q.add(this.startNode);
+
+		startNode.visited=true;
+		while(!q.isEmpty())
+		{
+			Node n=q.remove();
+			printNode(n);
+
+			Node conntedToCurrent=null;
+			while((conntedToCurrent=getUnvisitedConnectedNode(n))!=null)
+			{
+				conntedToCurrent.visited=true;
+
+				q.add(conntedToCurrent);
+			}
+		}
+		//Clear visited property of nodes
+		clearNodes();
+	}
+
+	//DFS traversal of a tree is performed by the dfs() function
+	//Note: DFS is not important to us (in the context of future labs)
+	public void dfs()
+	{
+		//DFS uses Stack data structure
+		Stack<Node> s=new Stack<Node>();
+		s.push(this.startNode);
+		startNode.visited=true;
+		printNode(startNode);
+		while(!s.isEmpty())
+		{
+			Node n = s.peek();
+			Node child = getUnvisitedConnectedNode(n);
+			if(child != null)
+			{
+				child.visited = true;
+				printNode(child);
+				s.push(child);
+			}
+			else
+			{
+				s.pop();
+			}
+		}
+		//Clear visited property of nodes
+		clearNodes();
+	}
+
+
+	//Utility methods for clearing visited property of node
+	private void clearNodes()
+	{
+		int i=0;
+		while(i<size)
+		{
+			Node n = nodes.get(i);
+			n.visited = false;
+			i++;
+		}
+	}
+
+	//Utility methods for printing the node's label
+	private void printNode(Node n)
+	{
+		System.out.print(n.label + " ");
+	}
+
+
+}

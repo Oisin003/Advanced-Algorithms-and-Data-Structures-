@@ -1,0 +1,86 @@
+function routePacket(fabric, start, goal):
+    rows = number of rows in fabric
+    cols = number of columns in fabric
+
+    visited = 2D array [rows][cols] initialized to false
+
+    if backtrack(start.row, start.col):
+        return true   // valid route found
+    else:
+        return false  // no valid route
+
+
+function backtrack()
+do{
+    // Check if node exists
+	if node == fabric
+		return true; // Node exists
+	else
+		return false; // Node does not exists
+
+    // The Node is not congested
+	if node != 001
+		return true;
+
+    // Track the Node
+	if node == node.visit
+		node = node.visit
+		return node; // The node has been visited
+	else
+		return false; // The node has not been visited
+
+	// Back tracking
+	if node != node.visited 
+		rows + 1; // move down
+	else if node == node.visited
+		rows - 1; // move up
+	else if node != node.visited
+		columns + 1;  // move left
+	else if node == node.visited
+		columns - 1;// move right
+
+
+}while(node != goal)  
+  
+
+
+Solution
+
+function routePacket(fabric, start, goal):
+    rows = number of rows in fabric
+    cols = number of columns in fabric
+
+    visited = 2D array [rows][cols] initialized to false
+
+    if backtrack(start.row, start.col, goal, fabric, visited):
+        return true   // valid route found
+    else:
+        return false  // no valid route
+
+
+function backtrack(r, c, goal, fabric, visited):
+    // 1. Boundary check
+    if r < 0 OR r >= rows OR c < 0 OR c >= cols:
+        return false
+
+    // 2. Blocked or already visited
+    if fabric[r][c] == BLOCKED OR visited[r][c] == true:
+        return false
+
+    // 3. Goal check
+    if r == goal.row AND c == goal.col:
+        return true
+
+    // 4. Mark current cell as visited
+    visited[r][c] = true
+
+    // 5. Explore neighbors recursively
+    if backtrack(r+1, c, goal, fabric, visited): return true   // move down
+    if backtrack(r-1, c, goal, fabric, visited): return true   // move up
+    if backtrack(r, c+1, goal, fabric, visited): return true   // move right
+    if backtrack(r, c-1, goal, fabric, visited): return true   // move left
+
+    // 6. Backtrack: unmark visited if no path found
+    visited[r][c] = false
+    return false
+
